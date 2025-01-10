@@ -19,15 +19,23 @@ const photos = ref([]);
 
 const fetchPhotos = async () => {
   try {
-    const response = await fetch("https://jsonplaceholder.typicode.com/photos?_limit=10");
+    const response = await fetch(
+      "https://api.unsplash.com/search/photos?query=vegetables&per_page=10&client_id=SGydLV4h49lV_4crVyYEsxjaVHQLzSwO2-WZ7isVvqg"
+    );
     if (!response.ok) {
       throw new Error(`Erro HTTP! Status: ${response.status}`);
     }
-    photos.value = await response.json();
+    const data = await response.json();
+    photos.value = data.results.map(photo => ({
+      id: photo.id,
+      url: photo.urls.small,
+      title: photo.alt_description || "Vegetable Image",
+    }));
   } catch (error) {
     console.error("Erro ao carregar fotos:", error);
   }
 };
+
 
 onMounted(fetchPhotos);
 
